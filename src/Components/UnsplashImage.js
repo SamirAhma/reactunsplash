@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import React, { useState } from "react";
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
-import Disqus from "disqus-react";
+import { Modal, ModalHeader, ModalBody } from "reactstrap";
 
+import { DiscussionEmbed } from "disqus-react";
 const Img = styled.img`
   width: 100%;
   height: 100%;
@@ -17,29 +17,44 @@ const Footer = styled.div`
 `;
 
 export default function UnsplashImage({ url, key }) {
-  const disqusShortname = "unsplashme";
+  const [titleD, settitleD] = useState("");
+  const [identifierD, setIdentifierD] = useState("");
   const disqusConfig = {
-    url: "http://localhost:3000",
-    identifier: key,
-    title: key,
+    url: identifierD,
+    identifier: identifierD,
+    title: titleD,
   };
+
   const [modal, setModal] = useState(false);
 
-  const toggle = () => setModal(!modal);
+  const toggle = () => {
+    settitleD(url);
+    setIdentifierD(url);
+    setModal(!modal);
+  };
 
   return (
     <>
-      <Img src={url} key={key} alt="" onClick={toggle}></Img>
+      <Img src={url} alt="" onClick={toggle}></Img>
       <Modal isOpen={modal} toggle={toggle}>
         <ModalHeader toggle={toggle}></ModalHeader>
         <ModalBody>
-          <Img src={url} key={key} alt="" />
+          <Img src={url} alt="" />
         </ModalBody>
         <Footer>
-          <Disqus.DiscussionEmbed
+          {/* <Disqus.DiscussionEmbed
             shortname={disqusShortname}
             config={disqusConfig}
-          />
+          /> */}
+
+          {/* <CommentEmbed
+            commentId={url}
+            showMedia={true}
+            showParentComment={true}
+            width={420}
+            height={320}
+          /> */}
+          <DiscussionEmbed shortname="unsplashme" config={disqusConfig} />
         </Footer>
       </Modal>
     </>

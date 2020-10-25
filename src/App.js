@@ -8,19 +8,7 @@ import { createGlobalStyle } from "styled-components";
 import InfiniteScroll from "react-infinite-scroll-component";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import {
-  TabContent,
-  TabPane,
-  Nav,
-  NavItem,
-  NavLink,
-  Card,
-  Button,
-  CardTitle,
-  CardText,
-  Row,
-  Col,
-} from "reactstrap";
+import { TabContent, TabPane, Nav, NavItem, NavLink } from "reactstrap";
 import classnames from "classnames";
 const GlobalStyle = createGlobalStyle`
 *{
@@ -46,6 +34,8 @@ const WrapperImage = styled.section`
 function App() {
   const [activeTab, setActiveTab] = useState("1");
   // const accessKey = process.env.REACT_APP_ACCESKEY;
+  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPagesecond, setcurrentPagesecond] = useState(360);
   const toggle = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
   };
@@ -61,15 +51,29 @@ function App() {
     const apiRoot = "https://api.unsplash.com";
     const accessKey = process.env.REACT_APP_ACCESKEY;
     axios
-      .get(`${apiRoot}/photos/?client_id=${accessKey}&count=8`)
-      .then((res) => setImages([...images, ...res.data]));
+      .get(
+        `${apiRoot}/photos/?client_id=${accessKey}&per_page=8&page=${
+          currentPage + 1
+        }`
+      )
+      .then((res) => {
+        setImages([...images, ...res.data]);
+        setCurrentPage(currentPage + 1);
+      });
   };
   const fetchImagessecond = () => {
     const apiRoot = "https://api.unsplash.com";
     const accessKey = process.env.REACT_APP_ACCESKEY;
     axios
-      .get(`${apiRoot}/photos/?client_id=${accessKey}&count=8&page=360`)
-      .then((res) => setSecondimages([...secondimages, ...res.data]));
+      .get(
+        `${apiRoot}/photos/?client_id=${accessKey}&per_page=8&page=${
+          currentPagesecond + 1
+        }`
+      )
+      .then((res) => {
+        setSecondimages([...secondimages, ...res.data]);
+        setcurrentPagesecond(currentPagesecond + 1);
+      });
   };
   return (
     <div className="App">
@@ -84,7 +88,7 @@ function App() {
                   toggle("1");
                 }}
               >
-                Tab1
+                Trending
               </NavLink>
             </NavItem>
             <NavItem>
@@ -94,7 +98,7 @@ function App() {
                   toggle("2");
                 }}
               >
-                More Tabs
+                People
               </NavLink>
             </NavItem>
           </Nav>
@@ -111,7 +115,7 @@ function App() {
                 {images.map((image) => (
                   <UnsplashImage
                     url={image.urls.thumb}
-                    key={image.id}
+                    key={image.urls.thumb}
                   ></UnsplashImage>
                 ))}
               </WrapperImage>
@@ -120,7 +124,7 @@ function App() {
           <TabPane tabId="2">
             <InfiniteScroll
               dataLength={secondimages.length}
-              next={fetchImages}
+              next={fetchImagessecond}
               hasMore={true}
               loader={<Loader></Loader>}
             >
@@ -128,7 +132,7 @@ function App() {
                 {secondimages.map((image) => (
                   <UnsplashImage
                     url={image.urls.thumb}
-                    key={image.id}
+                    key={image.urls.thumb}
                   ></UnsplashImage>
                 ))}
               </WrapperImage>
